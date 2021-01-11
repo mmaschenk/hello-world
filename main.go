@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/rancher/hello-world/templates"
+	"templates"
 	"net/http"
 	"os"
 	"regexp"
@@ -14,7 +14,9 @@ const defaultListenPort = "80"
 type HelloWorldConfig struct {
 	Hostname string
 	Services map[string]string
+	Environment	map[string]string
 	Headers  http.Header
+	Request  http.Request
 	Host     string
 }
 
@@ -24,6 +26,7 @@ func (config *HelloWorldConfig) GetManifest() (string, error) {
 
 func (config *HelloWorldConfig) getServices() {
 	k8sServices := make(map[string]string)
+	environment := make(map[string]string)
 
 	for _, evar := range os.Environ() {
 		show := strings.Split(evar, "=")
@@ -32,9 +35,11 @@ func (config *HelloWorldConfig) getServices() {
 		if regName.MatchString(show[0]) && regLink.MatchString(show[1]) {
 			k8sServices[strings.TrimSuffix(show[0], "_PORT")] = show[1]
 		}
+		environment[show[0]] = show[1]
 	}
 
 	config.Services = k8sServices
+	config.Environment = environment
 }
 
 func (config *HelloWorldConfig) Init(r *http.Request) {
@@ -42,6 +47,7 @@ func (config *HelloWorldConfig) Init(r *http.Request) {
 	config.Host = r.Host
 	config.Headers = r.Header
 	config.getServices()
+	config.Request = *r
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

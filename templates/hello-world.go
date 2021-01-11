@@ -80,9 +80,32 @@ const (
   </body>
 </html>`
 
+webEnv = `  <div id="environment">
+<h3>Environment info</h3>
+    {{ range $k,$v := .Environment }}
+      <b>{{ $k }}:</b> {{ $v }}<br />
+    {{ end }}
+</div>
+`
+
+request = `  <div id="request">
+<h3>Request</h3>
+
+<b>URL:</b> {{ .Request.URL }}<br />
+<b>Proto:</b> {{ .Request.Proto }}<br />
+<b>ProtoMajor:</b> {{ .Request.ProtoMajor }}<br />
+<b>ProtoMinor:</b> {{ .Request.ProtoMinor }}<br />
+<b>Host:</b> {{ .Request.Host }}<br />
+<b>RemoteAddr:</b> {{ .Request.RemoteAddr }}<br />
+<b>RequestURI:</b> {{ .Request.RequestURI }}<br />
+</div>
+`
+
 	HelloWorldTemplate = webHead + `
 ` + webServices + `
 ` + webLinks + `
 ` + webDetails + `
+` + webEnv + `
+` + request + `
 ` + webTail
 )

@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-const defaultListenPort = "80"
+const defaultListenPort = "8000"
 
 type HelloWorldConfig struct {
 	Hostname string
